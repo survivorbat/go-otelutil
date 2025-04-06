@@ -9,6 +9,7 @@ A few utility convenience functions for working with OpenTelemetry in Golang.
 ## 💪 Features
 
 - `NewSpan` is a convenience function for starting a span from a global Tracer object
+- `ErrorIf`, which may be used to wrap `return err` statements to record errors
 
 ## 🔭 Plans
 

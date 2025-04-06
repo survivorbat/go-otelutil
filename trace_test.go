@@ -53,6 +53,32 @@ func BenchmarkNewSpan_WithoutName(b *testing.B) {
 	}
 }
 
+func TestErrorIf_RecordsAndReturnsError(t *testing.T) {
+	t.Parallel()
+	// Arrange
+	span := &testSpan{}
+
+	// Act
+	result := ErrorIf(span, assert.AnError)
+
+	// Assert
+	require.ErrorIs(t, result, assert.AnError)
+	require.ErrorIs(t, span.RecordErrorCalledWithError, assert.AnError)
+}
+
+func TestErrorIf_RecordsNoErrorOnNil(t *testing.T) {
+	t.Parallel()
+	// Arrange
+	span := &testSpan{}
+
+	// Act
+	result := ErrorIf(span, nil)
+
+	// Assert
+	require.NoError(t, result)
+	require.NoError(t, span.RecordErrorCalledWithError)
+}
+
 type testTracer struct {
 	trace.Tracer
 
@@ -65,4 +91,14 @@ func (t *testTracer) Start(_ context.Context, name string, opts ...trace.SpanSta
 	t.startCalledWithOpts = opts
 
 	return nil, nil
+}
+
+type testSpan struct {
+	trace.Span
+
+	RecordErrorCalledWithError error
+}
+
+func (t *testSpan) RecordError(err error, _ ...trace.EventOption) {
+	t.RecordErrorCalledWithError = err
 }

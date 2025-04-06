@@ -18,6 +18,3 @@ tools: ## Install extra tools for development
 lint: ## Lint the code locally
 	golangci-lint run
 
-test: ## Run unit-tests
-	go test ./... -timeout=40s -parallel=20
-

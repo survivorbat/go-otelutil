@@ -33,3 +33,16 @@ func NewSpan(ctx context.Context, name string, opts ...trace.SpanStartOption) (c
 	//nolint:spancheck // It is returned, this is just a wrapper.
 	return Tracer.Start(ctx, name, opts...)
 }
+
+// ErrorIf may be used to record an error on the span and return it at the same time, such as:
+//
+//	return otelutil.ErrorIf(err)
+//
+// A list of options may be passed and are forwarded to RecordError.
+func ErrorIf(span trace.Span, err error, opts ...trace.EventOption) error {
+	if err != nil {
+		span.RecordError(err, opts...)
+	}
+
+	return err
+}
